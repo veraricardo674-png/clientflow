@@ -49,11 +49,11 @@ export default function PlayersPage() {
   }
 
   function getWhatsAppLink(player: Player) {
-  const cleanPhone = player.phone.replace(/\D/g, "");
-  const phoneWithCountryCode = 52${cleanPhone};
-  const message = Hola ${player.name}, ¿cómo estás? Te esperamos en las mesas 😎;
-  return https://wa.me/${phoneWithCountryCode}?text=${encodeURIComponent(message)};
-}
+    const cleanPhone = player.phone.replace(/\D/g, "");
+    const phoneWithCountryCode = 52${cleanPhone};
+    const message = Hola ${player.name}, ¿cómo estás? Te esperamos en las mesas 😎;
+    return https://wa.me/${phoneWithCountryCode}?text=${encodeURIComponent(message)};
+  }
 
   async function handleDelete(id: string) {
     const confirmDelete = confirm("¿Seguro que quieres eliminar este jugador?");
@@ -136,7 +136,14 @@ export default function PlayersPage() {
             <div>App: {player.app}</div>
             <div>Días inactivo: {days}</div>
 
-            <div style={{ marginTop: 12, display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <div
+              style={{
+                marginTop: 12,
+                display: "flex",
+                gap: 10,
+                flexWrap: "wrap",
+              }}
+            >
               <a
                 href={getWhatsAppLink(player)}
                 target="_blank"
