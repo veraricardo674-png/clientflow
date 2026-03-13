@@ -49,11 +49,11 @@ export default function PlayersPage() {
   }
 
   function getWhatsAppLink(player: Player) {
-    const cleanPhone = player.phone.replace(/\D/g, "");
-    const phoneWithCountryCode = 52${cleanPhone};
-    const message = Hola ${player.name}, ¿cómo estás? Te esperamos en las mesas 😎;
-    return https://wa.me/${phoneWithCountryCode}?text=${encodeURIComponent(message)};
-  }
+  const cleanPhone = player.phone.replace(/\D/g, "");
+  const phoneWithCountryCode = 52${cleanPhone};
+  const message = Hola ${player.name}, ¿cómo estás? Te esperamos en las mesas 😎;
+  return https://wa.me/${phoneWithCountryCode}?text=${encodeURIComponent(message)};
+}
 
   async function handleDelete(id: string) {
     const confirmDelete = confirm("¿Seguro que quieres eliminar este jugador?");
