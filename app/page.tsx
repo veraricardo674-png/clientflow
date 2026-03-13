@@ -1,27 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { supabase } from "./supabase";
 
 type Player = {
+  id: string;
   name: string;
   phone: string;
   app: string;
   status: string;
-  lastActivity?: string;
+  last_activity?: string | null;
 };
 
 export default function Home() {
   const [players, setPlayers] = useState<Player[]>([]);
 
   useEffect(() => {
-    const savedPlayers = localStorage.getItem("players");
-    if (savedPlayers) {
-      setPlayers(JSON.parse(savedPlayers));
-    }
+    loadPlayers();
   }, []);
 
+  async function loadPlayers() {
+    const { data, error } = await supabase.from("players").select("*");
+
+    if (error) {
+      console.error("Error cargando jugadores:", error);
+      return;
+    }
+
+    setPlayers(data || []);
+  }
+
   const total = players.length;
-  const activos = players.filter((p) => p.status === "activo").length;
+  const activos = players.filter((p) => p.status?.toLowerCase() === "activo").length;
   const inactivos = total - activos;
 
   return (
