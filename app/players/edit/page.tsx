@@ -4,15 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "../../supabase";
 
-type Player = {
-  id: string;
-  name: string;
-  phone: string;
-  app: string;
-  status: string;
-  last_activity?: string | null;
-};
-
 export default function EditPlayerPage() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -79,76 +70,104 @@ export default function EditPlayerPage() {
 
   if (loading) {
     return (
-      <main style={{ padding: 40, color: "white" }}>
+      <main
+        style={{
+          minHeight: "100vh",
+          backgroundColor: "#0f172a",
+          color: "white",
+          fontFamily: "sans-serif",
+          padding: "40px 24px",
+        }}
+      >
         <h1>Cargando jugador...</h1>
       </main>
     );
   }
 
   return (
-    <main style={{ padding: 40, color: "white" }}>
-      <h1>Editar jugador</h1>
+    <main
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#0f172a",
+        color: "white",
+        fontFamily: "sans-serif",
+        padding: "40px 24px",
+      }}
+    >
+      <div style={{ maxWidth: 500, margin: "0 auto" }}>
+        <h1 style={{ marginBottom: 20 }}>Editar jugador</h1>
 
-      <form
-        onSubmit={handleUpdate}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-          maxWidth: 400,
-          marginTop: 20,
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ padding: 10 }}
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="Teléfono"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          style={{ padding: 10 }}
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="App"
-          value={app}
-          onChange={(e) => setApp(e.target.value)}
-          style={{ padding: 10 }}
-          required
-        />
-
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          style={{ padding: 10 }}
-        >
-          <option value="activo">Activo</option>
-          <option value="inactivo">Inactivo</option>
-        </select>
-
-        <button
-          type="submit"
+        <form
+          onSubmit={handleUpdate}
           style={{
-            padding: 12,
-            backgroundColor: "#2563eb",
-            color: "white",
-            border: "none",
-            borderRadius: 8,
-            cursor: "pointer",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            backgroundColor: "#111827",
+            padding: 20,
+            borderRadius: 12,
+            border: "1px solid #334155",
           }}
         >
-          Guardar cambios
-        </button>
-      </form>
+          <input
+            type="text"
+            placeholder="Nombre"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={inputStyle}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Teléfono"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={inputStyle}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="App"
+            value={app}
+            onChange={(e) => setApp(e.target.value)}
+            style={inputStyle}
+            required
+          />
+
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            style={inputStyle}
+          >
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+
+          <button type="submit" style={saveBtn}>
+            Guardar cambios
+          </button>
+        </form>
+      </div>
     </main>
   );
 }
+
+const inputStyle: React.CSSProperties = {
+  padding: 10,
+  borderRadius: 8,
+  border: "1px solid #475569",
+  backgroundColor: "#0f172a",
+  color: "white",
+};
+
+const saveBtn: React.CSSProperties = {
+  padding: 12,
+  backgroundColor: "#2563eb",
+  color: "white",
+  border: "none",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: "bold",
+};
