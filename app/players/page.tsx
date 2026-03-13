@@ -36,7 +36,6 @@ export default function PlayersPage() {
 
     const last = new Date(lastActivity).getTime();
     const now = new Date().getTime();
-
     const diff = now - last;
 
     return Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -47,6 +46,13 @@ export default function PlayersPage() {
     if (days >= 20) return "orange";
     if (days >= 10) return "yellow";
     return "limegreen";
+  }
+
+  function getWhatsAppLink(player: Player) {
+    const cleanPhone = player.phone.replace(/\D/g, "");
+    const phoneWithCountryCode = 52${cleanPhone};
+    const message = Hola ¿cómo estás? Te esperamos en las mesas pregunta por nuestras promociones exclusivas😎;
+    return https://wa.me/${phoneWithCountryCode}?text=${encodeURIComponent(message)};
   }
 
   const filteredPlayers = players.filter((p) => {
@@ -104,13 +110,35 @@ export default function PlayersPage() {
                   backgroundColor: color,
                 }}
               />
-
               <strong>{player.name}</strong>
             </div>
 
             <div>Teléfono: {player.phone}</div>
             <div>App: {player.app}</div>
             <div>Días inactivo: {days}</div>
+
+            <div style={{ marginTop: 12 }}>
+              <a
+                href={getWhatsAppLink(player)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
+                <button
+                  style={{
+                    backgroundColor: "#22c55e",
+                    color: "white",
+                    border: "none",
+                    padding: "8px 14px",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                  }}
+                >
+                  WhatsApp
+                </button>
+              </a>
+            </div>
           </div>
         );
       })}
