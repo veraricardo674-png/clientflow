@@ -14,160 +14,114 @@ type Player = {
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     loadPlayers();
   }, []);
 
   async function loadPlayers() {
-    setLoading(true);
-
-    const { data, error } = await supabase
-      .from("players")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("players").select("*");
 
     if (error) {
-      console.error("Error cargando jugadores:", error);
-      alert("Error cargando jugadores: " + error.message);
-      setLoading(false);
+      console.error(error);
       return;
     }
 
     setPlayers(data || []);
-    setLoading(false);
   }
 
   function getDaysInactive(lastActivity?: string | null) {
-    if (!lastActivity) return 0;
+    if (!lastActivity) return 999;
 
-    const lastDate = new Date(lastActivity).getTime();
+    const last = new Date(lastActivity).getTime();
     const now = new Date().getTime();
-    const diffMs = now - lastDate;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    return diffDays;
+    const diff = now - last;
+
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
   }
 
-  function getStatusColor(daysInactive: number) {
-    if (daysInactive >= 30) return "red";
-    if (daysInactive >= 20) return "orange";
-    if (daysInactive >= 10) return "yellow";
+  function getColor(days: number) {
+    if (days >= 30) return "red";
+    if (days >= 20) return "orange";
+    if (days >= 10) return "yellow";
     return "limegreen";
   }
 
-  function getStatusLabel(daysInactive: number) {
-    if (daysInactive >= 30) return "Inactivo 30+ días";
-    if (daysInactive >= 20) return "Inactivo 20+ días";
-    if (daysInactive >= 10) return "Inactivo 10+ días";
-    return "Activo";
-  }
+  const filteredPlayers = players.filter((p) => {
+    const days = getDaysInactive(p.last_activity);
 
-  async function handleDelete(playerId: string) {
-    const confirmDelete = confirm("¿Seguro que quieres eliminar este jugador?");
-    if (!confirmDelete) return;
+    if (filter === "10") return days >= 10;
+    if (filter === "20") return days >= 20;
+    if (filter === "30") return days >= 30;
 
-    const { error } = await supabase
-      .from("players")
-      .delete()
-      .eq("id", playerId);
-
-    if (error) {
-      console.error("Error eliminando jugador:", error);
-      alert("Error eliminando jugador: " + error.message);
-      return;
-    }
-
-    setPlayers((prev) => prev.filter((player) => player.id !== playerId));
-  }
-
-  function handleEdit(playerId: string) {
-    localStorage.setItem("editPlayerId", playerId);
-    window.location.href = "/players/edit";
-  }
+    return true;
+  });
 
   return (
     <main style={{ padding: 40, fontFamily: "sans-serif", color: "white" }}>
-      <h1 style={{ marginBottom: 20 }}>Lista de jugadores</h1>
+      <h1 style={{ marginBottom: 20 }}>Jugadores</h1>
 
-      {loading ? (
-        <p>Cargando jugadores...</p>
-      ) : players.length === 0 ? (
-        <p>No hay jugadores guardados todavía.</p>
-      ) : (
-        <div>
-          {players.map((player) => {
-            const daysInactive = getDaysInactive(player.last_activity);
-            const color = getStatusColor(daysInactive);
-            const label = getStatusLabel(daysInactive);
+      <div style={{ marginBottom: 20 }}>
+        <button onClick={() => setFilter("all")} style={btn}>
+          Todos
+        </button>
 
-            return (
+        <button onClick={() => setFilter("10")} style={btn}>
+          🟡 10+ días
+        </button>
+
+        <button onClick={() => setFilter("20")} style={btn}>
+          🟠 20+ días
+        </button>
+
+        <button onClick={() => setFilter("30")} style={btn}>
+          🔴 30+ días
+        </button>
+      </div>
+
+      {filteredPlayers.map((player) => {
+        const days = getDaysInactive(player.last_activity);
+        const color = getColor(days);
+
+        return (
+          <div
+            key={player.id}
+            style={{
+              border: "1px solid gray",
+              padding: 12,
+              marginBottom: 10,
+              borderRadius: 8,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div
-                key={player.id}
                 style={{
-                  padding: 12,
-                  marginBottom: 12,
-                  border: "1px solid gray",
-                  borderRadius: 8,
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  backgroundColor: color,
                 }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div
-                    style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: "50%",
-                      backgroundColor: color,
-                    }}
-                  />
-                  <strong>{player.name}</strong>
-                </div>
+              />
 
-                <div style={{ marginTop: 8 }}>Teléfono: {player.phone}</div>
-                <div>App: {player.app}</div>
-                <div>Estado: {label}</div>
-                <div>
-                  Última actividad:{" "}
-                  {player.last_activity ? player.last_activity : "Sin actividad"}
-                </div>
-                <div>Días inactivo: {daysInactive}</div>
+              <strong>{player.name}</strong>
+            </div>
 
-                <div style={{ marginTop: 12 }}>
-                  <button
-                    onClick={() => handleEdit(player.id)}
-                    style={{
-                      marginRight: 10,
-                      padding: 8,
-                      borderRadius: 6,
-                      border: "none",
-                      backgroundColor: "#2563eb",
-                      color: "white",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Editar jugador
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(player.id)}
-                    style={{
-                      padding: 8,
-                      borderRadius: 6,
-                      border: "none",
-                      backgroundColor: "#dc2626",
-                      color: "white",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Eliminar jugador
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+            <div>Teléfono: {player.phone}</div>
+            <div>App: {player.app}</div>
+            <div>Días inactivo: {days}</div>
+          </div>
+        );
+      })}
     </main>
   );
 }
+
+const btn = {
+  marginRight: 10,
+  padding: "8px 12px",
+  borderRadius: 6,
+  border: "none",
+  cursor: "pointer",
+};
