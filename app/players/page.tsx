@@ -24,7 +24,7 @@ export default function PlayersPage() {
     const { data, error } = await supabase.from("players").select("*");
 
     if (error) {
-      console.error(error);
+      console.error("Error cargando jugadores:", error);
       return;
     }
 
@@ -51,8 +51,27 @@ export default function PlayersPage() {
   function getWhatsAppLink(player: Player) {
     const cleanPhone = player.phone.replace(/\D/g, "");
     const phoneWithCountryCode = 52${cleanPhone};
-    const message = Hola ¿cómo estás? Te esperamos en las mesas pregunta por nuestras promociones exclusivas😎;
+    const message = Hola ${player.name}, ¿cómo estás? Te esperamos en las mesas 😎;
     return https://wa.me/${phoneWithCountryCode}?text=${encodeURIComponent(message)};
+  }
+
+  async function handleDelete(id: string) {
+    const confirmDelete = confirm("¿Seguro que quieres eliminar este jugador?");
+    if (!confirmDelete) return;
+
+    const { error } = await supabase.from("players").delete().eq("id", id);
+
+    if (error) {
+      alert("Error eliminando jugador");
+      console.error(error);
+      return;
+    }
+
+    await loadPlayers();
+  }
+
+  function handleEdit(id: string) {
+    window.location.href = /players/edit?id=${id};
   }
 
   const filteredPlayers = players.filter((p) => {
@@ -70,19 +89,19 @@ export default function PlayersPage() {
       <h1 style={{ marginBottom: 20 }}>Jugadores</h1>
 
       <div style={{ marginBottom: 20 }}>
-        <button onClick={() => setFilter("all")} style={btn}>
+        <button onClick={() => setFilter("all")} style={filterBtn}>
           Todos
         </button>
 
-        <button onClick={() => setFilter("10")} style={btn}>
+        <button onClick={() => setFilter("10")} style={filterBtn}>
           🟡 10+ días
         </button>
 
-        <button onClick={() => setFilter("20")} style={btn}>
+        <button onClick={() => setFilter("20")} style={filterBtn}>
           🟠 20+ días
         </button>
 
-        <button onClick={() => setFilter("30")} style={btn}>
+        <button onClick={() => setFilter("30")} style={filterBtn}>
           🔴 30+ días
         </button>
       </div>
@@ -117,7 +136,7 @@ export default function PlayersPage() {
             <div>App: {player.app}</div>
             <div>Días inactivo: {days}</div>
 
-            <div style={{ marginTop: 12 }}>
+            <div style={{ marginTop: 12, display: "flex", gap: 10, flexWrap: "wrap" }}>
               <a
                 href={getWhatsAppLink(player)}
                 target="_blank"
@@ -138,6 +157,36 @@ export default function PlayersPage() {
                   WhatsApp
                 </button>
               </a>
+
+              <button
+                onClick={() => handleEdit(player.id)}
+                style={{
+                  backgroundColor: "#2563eb",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 14px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                Editar jugador
+              </button>
+
+              <button
+                onClick={() => handleDelete(player.id)}
+                style={{
+                  backgroundColor: "#dc2626",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 14px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                Eliminar jugador
+              </button>
             </div>
           </div>
         );
@@ -146,7 +195,7 @@ export default function PlayersPage() {
   );
 }
 
-const btn = {
+const filterBtn = {
   marginRight: 10,
   padding: "8px 12px",
   borderRadius: 6,
