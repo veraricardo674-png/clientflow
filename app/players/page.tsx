@@ -24,7 +24,8 @@ export default function PlayersPage() {
     const { data, error } = await supabase.from("players").select("*");
 
     if (error) {
-      console.error("Error cargando jugadores:", error);
+      console.error(error);
+      alert("Error cargando jugadores");
       return;
     }
 
@@ -36,6 +37,7 @@ export default function PlayersPage() {
 
     const last = new Date(lastActivity).getTime();
     const now = new Date().getTime();
+
     const diff = now - last;
 
     return Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -48,13 +50,6 @@ export default function PlayersPage() {
     return "limegreen";
   }
 
-  function getWhatsAppLink(player: Player) {
-    const cleanPhone = player.phone.replace(/\D/g, "");
-    const phoneWithCountryCode = 52${cleanPhone};
-    const message = Hola ${player.name}, ¿cómo estás? Te esperamos en las mesas 😎;
-    return https://wa.me/${phoneWithCountryCode}?text=${encodeURIComponent(message)};
-  }
-
   async function handleDelete(id: string) {
     const confirmDelete = confirm("¿Seguro que quieres eliminar este jugador?");
     if (!confirmDelete) return;
@@ -62,16 +57,16 @@ export default function PlayersPage() {
     const { error } = await supabase.from("players").delete().eq("id", id);
 
     if (error) {
-      alert("Error eliminando jugador");
       console.error(error);
+      alert("Error eliminando jugador");
       return;
     }
 
-    await loadPlayers();
+    loadPlayers();
   }
 
   function handleEdit(id: string) {
-    window.location.href = /players/edit?id=${id};
+    window.location.href = `/players/edit?id=${id}`;
   }
 
   const filteredPlayers = players.filter((p) => {
@@ -85,25 +80,14 @@ export default function PlayersPage() {
   });
 
   return (
-    <main style={{ padding: 40, fontFamily: "sans-serif", color: "white" }}>
-      <h1 style={{ marginBottom: 20 }}>Jugadores</h1>
+    <main style={{ padding: 40 }}>
+      <h1>Jugadores</h1>
 
       <div style={{ marginBottom: 20 }}>
-        <button onClick={() => setFilter("all")} style={filterBtn}>
-          Todos
-        </button>
-
-        <button onClick={() => setFilter("10")} style={filterBtn}>
-          🟡 10+ días
-        </button>
-
-        <button onClick={() => setFilter("20")} style={filterBtn}>
-          🟠 20+ días
-        </button>
-
-        <button onClick={() => setFilter("30")} style={filterBtn}>
-          🔴 30+ días
-        </button>
+        <button onClick={() => setFilter("all")}>Todos</button>
+        <button onClick={() => setFilter("10")}>10+ días</button>
+        <button onClick={() => setFilter("20")}>20+ días</button>
+        <button onClick={() => setFilter("30")}>30+ días</button>
       </div>
 
       {filteredPlayers.map((player) => {
@@ -123,8 +107,8 @@ export default function PlayersPage() {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div
                 style={{
-                  width: 14,
-                  height: 14,
+                  width: 12,
+                  height: 12,
                   borderRadius: "50%",
                   backgroundColor: color,
                 }}
@@ -136,63 +120,16 @@ export default function PlayersPage() {
             <div>App: {player.app}</div>
             <div>Días inactivo: {days}</div>
 
-            <div
-              style={{
-                marginTop: 12,
-                display: "flex",
-                gap: 10,
-                flexWrap: "wrap",
-              }}
-            >
-              <a
-                href={getWhatsAppLink(player)}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: "none" }}
-              >
-                <button
-                  style={{
-                    backgroundColor: "#22c55e",
-                    color: "white",
-                    border: "none",
-                    padding: "8px 14px",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                  }}
-                >
-                  WhatsApp
-                </button>
-              </a>
-
-              <button
-                onClick={() => handleEdit(player.id)}
-                style={{
-                  backgroundColor: "#2563eb",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 14px",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                }}
-              >
-                Editar jugador
+            <div style={{ marginTop: 10 }}>
+              <button onClick={() => handleEdit(player.id)}>
+                Editar
               </button>
 
               <button
                 onClick={() => handleDelete(player.id)}
-                style={{
-                  backgroundColor: "#dc2626",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 14px",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                }}
+                style={{ marginLeft: 10 }}
               >
-                Eliminar jugador
+                Eliminar
               </button>
             </div>
           </div>
@@ -201,11 +138,3 @@ export default function PlayersPage() {
     </main>
   );
 }
-
-const filterBtn = {
-  marginRight: 10,
-  padding: "8px 12px",
-  borderRadius: 6,
-  border: "none",
-  cursor: "pointer",
-};
