@@ -130,94 +130,161 @@ export default function RechargePage() {
   }
 
   return (
-    <main style={{ padding: 40, fontFamily: "sans-serif", color: "white" }}>
-      <h1 style={{ marginBottom: 20 }}>Registrar recarga</h1>
-
-      <div style={{ maxWidth: 500 }}>
-        <input
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setSelectedPlayer("");
-          }}
-          placeholder="Buscar jugador por nombre o teléfono"
-          style={{
-            display: "block",
-            marginBottom: 10,
-            padding: 10,
-            width: "100%",
-            border: "1px solid gray",
-            borderRadius: 6,
-            backgroundColor: "#111",
-            color: "white",
-          }}
-        />
-
-        {search && (
-          <div
+    <main
+      style={{
+        minHeight: "100vh",
+        background:
+          "radial-gradient(circle at top, #1e3a8a 0%, #0f172a 45%, #020617 100%)",
+        color: "white",
+        fontFamily: "sans-serif",
+        padding: "40px 20px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 820,
+          margin: "0 auto",
+        }}
+      >
+        <div style={{ marginBottom: 28 }}>
+          <h1
             style={{
-              border: "1px solid gray",
-              borderRadius: 6,
-              marginBottom: 10,
-              maxHeight: 150,
-              overflowY: "auto",
+              fontSize: 42,
+              fontWeight: "bold",
+              marginBottom: 8,
+              letterSpacing: "-1px",
             }}
           >
-            {filteredPlayers.slice(0, 10).map((p) => (
-              <div
-                key={p.id}
-                onClick={() => {
-                  setSelectedPlayer(p.name);
-                  setSearch(p.name);
-                }}
-                style={{
-                  padding: 8,
-                  cursor: "pointer",
-                  borderBottom: "1px solid #333",
-                }}
-              >
-                {p.name} — {p.phone}
-              </div>
-            ))}
-          </div>
-        )}
+            Registrar recarga
+          </h1>
 
-        <input
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Monto"
-          style={{
-            display: "block",
-            marginBottom: 12,
-            padding: 10,
-            width: "100%",
-            border: "1px solid gray",
-            borderRadius: 6,
-            backgroundColor: "#111",
-            color: "white",
-          }}
-        />
+          <p
+            style={{
+              color: "#cbd5e1",
+              fontSize: 17,
+              margin: 0,
+            }}
+          >
+            Busca un jugador y registra su recarga rápidamente
+          </p>
+        </div>
 
-        <button
-          onClick={handleRecharge}
+        <div
           style={{
-            padding: 10,
-            borderRadius: 6,
-            border: "none",
-            backgroundColor: "#16a34a",
-            color: "white",
-            cursor: "pointer",
-            marginBottom: 20,
+            background: "rgba(15, 23, 42, 0.72)",
+            border: "1px solid rgba(148, 163, 184, 0.20)",
+            borderRadius: 22,
+            padding: 28,
+            boxShadow: "0 20px 50px rgba(0,0,0,0.22)",
+            backdropFilter: "blur(8px)",
+            marginBottom: 22,
           }}
         >
-          Registrar recarga
-        </button>
+          <div
+            style={{
+              display: "grid",
+              gap: 16,
+            }}
+          >
+            <div>
+              <div style={labelStyle}>Jugador</div>
+              <input
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setSelectedPlayer("");
+                }}
+                placeholder="Buscar jugador por nombre o teléfono"
+                style={inputStyle}
+              />
+            </div>
+
+            {search && (
+              <div
+                style={{
+                  border: "1px solid rgba(148, 163, 184, 0.20)",
+                  borderRadius: 16,
+                  overflow: "hidden",
+                  background: "rgba(15, 23, 42, 0.9)",
+                  maxHeight: 220,
+                  overflowY: "auto",
+                }}
+              >
+                {filteredPlayers.length > 0 ? (
+                  filteredPlayers.slice(0, 10).map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => {
+                        setSelectedPlayer(p.name);
+                        setSearch(p.name);
+                      }}
+                      style={{
+                        padding: "12px 14px",
+                        cursor: "pointer",
+                        borderBottom: "1px solid rgba(148, 163, 184, 0.12)",
+                        color: "white",
+                      }}
+                    >
+                      <strong>{p.name}</strong> — {p.phone}
+                    </div>
+                  ))
+                ) : (
+                  <div
+                    style={{
+                      padding: "12px 14px",
+                      color: "#cbd5e1",
+                    }}
+                  >
+                    No se encontraron jugadores
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div>
+              <div style={labelStyle}>Monto</div>
+              <input
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Monto"
+                style={inputStyle}
+              />
+            </div>
+
+            <button onClick={handleRecharge} style={saveBtn}>
+              Registrar recarga
+            </button>
+          </div>
+        </div>
 
         {recentPlayers.length > 0 && (
-          <>
-            <h3>Últimos jugadores</h3>
+          <div
+            style={{
+              background: "rgba(15, 23, 42, 0.72)",
+              border: "1px solid rgba(148, 163, 184, 0.20)",
+              borderRadius: 22,
+              padding: 24,
+              boxShadow: "0 20px 50px rgba(0,0,0,0.22)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <h3
+              style={{
+                marginTop: 0,
+                marginBottom: 16,
+                fontSize: 24,
+              }}
+            >
+              Últimos jugadores
+            </h3>
 
-            <div style={{ marginTop: 10 }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                flexWrap: "wrap",
+              }}
+            >
               {recentPlayers.map((p, i) => (
                 <button
                   key={i}
@@ -225,24 +292,60 @@ export default function RechargePage() {
                     setSelectedPlayer(p);
                     setSearch(p);
                   }}
-                  style={{
-                    marginRight: 10,
-                    marginBottom: 10,
-                    padding: 8,
-                    borderRadius: 6,
-                    border: "1px solid gray",
-                    backgroundColor: "#222",
-                    color: "white",
-                    cursor: "pointer",
-                  }}
+                  style={recentBtn}
                 >
                   {p}
                 </button>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
     </main>
   );
 }
+
+const labelStyle: React.CSSProperties = {
+  fontSize: 15,
+  color: "#cbd5e1",
+  marginBottom: 8,
+  fontWeight: 600,
+};
+
+const inputStyle: React.CSSProperties = {
+  display: "block",
+  width: "100%",
+  padding: "16px 18px",
+  borderRadius: 14,
+  border: "1px solid rgba(148, 163, 184, 0.22)",
+  background: "rgba(15, 23, 42, 0.85)",
+  color: "white",
+  fontSize: 16,
+  outline: "none",
+  boxSizing: "border-box",
+};
+
+const saveBtn: React.CSSProperties = {
+  marginTop: 4,
+  width: "100%",
+  padding: "16px 18px",
+  borderRadius: 14,
+  border: "none",
+  background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
+  color: "white",
+  fontSize: 16,
+  fontWeight: "bold",
+  cursor: "pointer",
+  boxShadow: "0 12px 24px rgba(0,0,0,0.20)",
+};
+
+const recentBtn: React.CSSProperties = {
+  padding: "10px 14px",
+  borderRadius: 12,
+  border: "1px solid rgba(148, 163, 184, 0.20)",
+  background: "rgba(15, 23, 42, 0.92)",
+  color: "white",
+  cursor: "pointer",
+  fontWeight: "bold",
+  boxShadow: "0 10px 18px rgba(0,0,0,0.16)",
+};
