@@ -65,7 +65,7 @@ export default function PlayersPage() {
   }
 
   function handleEdit(id: string) {
-    window.location.href = /players/edit?id=${id};
+    window.location.href = `/players/edit?id=${id}`;
   }
 
   const filteredPlayers = players.filter((p) => {
