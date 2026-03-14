@@ -106,6 +106,7 @@ export default function PlayersPage() {
           >
             Jugadores
           </h1>
+
           <p
             style={{
               color: "#cbd5e1",
@@ -206,9 +207,10 @@ export default function PlayersPage() {
                       height: 14,
                       borderRadius: "50%",
                       backgroundColor: color,
-                      boxShadow: 0 0 12px ${color},
+                      boxShadow: `0 0 12px ${color}`,
                     }}
                   />
+
                   <strong
                     style={{
                       fontSize: 28,
