@@ -1,30 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { supabase } from "../../supabase";
 
 export default function EditPlayerPage() {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-
-  const [loading, setLoading] = useState(true);
+  const [playerId, setPlayerId] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [app, setApp] = useState("");
   const [status, setStatus] = useState("activo");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
     if (!id) {
       alert("No se recibió el id del jugador");
       window.location.href = "/players";
       return;
     }
 
-    loadPlayer();
-  }, [id]);
+    setPlayerId(id);
+    loadPlayer(id);
+  }, []);
 
-  async function loadPlayer() {
+  async function loadPlayer(id: string) {
     const { data, error } = await supabase
       .from("players")
       .select("*")
@@ -32,7 +33,7 @@ export default function EditPlayerPage() {
       .single();
 
     if (error || !data) {
-      console.error("Error cargando jugador:", error);
+      console.error(error);
       alert("No se encontró el jugador a editar");
       window.location.href = "/players";
       return;
@@ -56,10 +57,10 @@ export default function EditPlayerPage() {
         app,
         status,
       })
-      .eq("id", id);
+      .eq("id", playerId);
 
     if (error) {
-      console.error("Error actualizando jugador:", error);
+      console.error(error);
       alert("Error actualizando jugador");
       return;
     }
