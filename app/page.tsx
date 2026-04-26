@@ -29,7 +29,6 @@ export default function Home() {
     const { data, error } = await supabase
   .from("players")
   .select("*")
-  .order("created_at", { ascending: false })
   .range(0, 9999);
 
     if (error) {
