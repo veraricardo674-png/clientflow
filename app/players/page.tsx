@@ -25,7 +25,7 @@ export default function PlayersPage() {
       .from("players")
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(10000);
+      .range(0, 9999);
 
     if (error) {
       console.error("Error cargando jugadores:", error);

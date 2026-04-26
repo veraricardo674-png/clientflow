@@ -26,7 +26,11 @@ export default function Home() {
   }, []);
 
   async function loadPlayers() {
-    const { data, error } = await supabase.from("players").select("*");
+    const { data, error } = await supabase
+  .from("players")
+  .select("*")
+  .order("created_at", { ascending: false })
+  .range(0, 9999);
 
     if (error) {
       console.error("Error cargando jugadores:", error);
