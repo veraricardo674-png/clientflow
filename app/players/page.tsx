@@ -21,7 +21,11 @@ export default function PlayersPage() {
   }, []);
 
   async function loadPlayers() {
-    const { data, error } = await supabase.from("players").select("*");
+    const { data, error } = await supabase
+      .from("players")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(10000);
 
     if (error) {
       console.error("Error cargando jugadores:", error);
@@ -89,12 +93,7 @@ export default function PlayersPage() {
         padding: "40px 20px",
       }}
     >
-      <div
-        style={{
-          maxWidth: 1180,
-          margin: "0 auto",
-        }}
-      >
+      <div style={{ maxWidth: 1180, margin: "0 auto" }}>
         <div style={{ marginBottom: 28 }}>
           <h1
             style={{
@@ -107,13 +106,7 @@ export default function PlayersPage() {
             Jugadores
           </h1>
 
-          <p
-            style={{
-              color: "#cbd5e1",
-              fontSize: 17,
-              margin: 0,
-            }}
-          >
+          <p style={{ color: "#cbd5e1", fontSize: 17, margin: 0 }}>
             Administra, edita y monitorea la actividad de tus jugadores
           </p>
         </div>
@@ -130,7 +123,8 @@ export default function PlayersPage() {
             onClick={() => setFilter("all")}
             style={{
               ...filterBtn,
-              background: filter === "all" ? "#2563eb" : "rgba(15, 23, 42, 0.72)",
+              background:
+                filter === "all" ? "#2563eb" : "rgba(15, 23, 42, 0.72)",
               color: "white",
             }}
           >
@@ -141,7 +135,8 @@ export default function PlayersPage() {
             onClick={() => setFilter("10")}
             style={{
               ...filterBtn,
-              background: filter === "10" ? "#eab308" : "rgba(15, 23, 42, 0.72)",
+              background:
+                filter === "10" ? "#eab308" : "rgba(15, 23, 42, 0.72)",
               color: "white",
             }}
           >
@@ -152,7 +147,8 @@ export default function PlayersPage() {
             onClick={() => setFilter("20")}
             style={{
               ...filterBtn,
-              background: filter === "20" ? "#f97316" : "rgba(15, 23, 42, 0.72)",
+              background:
+                filter === "20" ? "#f97316" : "rgba(15, 23, 42, 0.72)",
               color: "white",
             }}
           >
@@ -163,7 +159,8 @@ export default function PlayersPage() {
             onClick={() => setFilter("30")}
             style={{
               ...filterBtn,
-              background: filter === "30" ? "#e11d48" : "rgba(15, 23, 42, 0.72)",
+              background:
+                filter === "30" ? "#e11d48" : "rgba(15, 23, 42, 0.72)",
               color: "white",
             }}
           >
@@ -171,12 +168,7 @@ export default function PlayersPage() {
           </button>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gap: 16,
-          }}
-        >
+        <div style={{ display: "grid", gap: 16 }}>
           {filteredPlayers.map((player) => {
             const days = getDaysInactive(player.last_activity);
             const color = getColor(days);
@@ -211,12 +203,7 @@ export default function PlayersPage() {
                     }}
                   />
 
-                  <strong
-                    style={{
-                      fontSize: 28,
-                      lineHeight: 1,
-                    }}
-                  >
+                  <strong style={{ fontSize: 28, lineHeight: 1 }}>
                     {player.name}
                   </strong>
                 </div>
@@ -251,18 +238,15 @@ export default function PlayersPage() {
                   </div>
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 12,
-                    flexWrap: "wrap",
-                  }}
-                >
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                   <button onClick={() => handleEdit(player.id)} style={editBtn}>
                     Editar
                   </button>
 
-                  <button onClick={() => handleDelete(player.id)} style={deleteBtn}>
+                  <button
+                    onClick={() => handleDelete(player.id)}
+                    style={deleteBtn}
+                  >
                     Eliminar
                   </button>
                 </div>
