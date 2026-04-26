@@ -25,20 +25,22 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  async function loadPlayers() {
-    const { data, error } = await supabase
-  .from("players")
-  .select("*")
-  .range(0, 9999);
-  console.log("HOME TOTAL:", data?.length);
+ async function loadPlayers() {
+  const { data, error, count } = await supabase
+    .from("players")
+    .select("*", { count: "exact" })
+    .range(0, 9999);
 
-    if (error) {
-      console.error("Error cargando jugadores:", error);
-      return;
-    }
-
-    setPlayers(data || []);
+  if (error) {
+    console.error("Error cargando jugadores:", error);
+    return;
   }
+
+  console.log("HOME TOTAL:", data?.length);
+  console.log("TOTAL REAL DB:", count);
+
+  setPlayers(data || []);
+}
 
   const total = players.length;
   const activos = players.filter(
