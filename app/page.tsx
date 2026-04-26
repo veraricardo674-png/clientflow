@@ -30,6 +30,7 @@ export default function Home() {
   .from("players")
   .select("*")
   .range(0, 9999);
+  console.log("HOME TOTAL:", data?.length);
 
     if (error) {
       console.error("Error cargando jugadores:", error);
